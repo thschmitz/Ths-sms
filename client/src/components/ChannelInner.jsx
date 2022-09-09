@@ -1,3 +1,5 @@
+
+
 import React, { useState } from 'react';
 import { Avatar, MessageInput, MessageList, Thread, useChannelActionContext, useChannelStateContext, useChatContext, Window } from 'stream-chat-react';
 
@@ -91,4 +93,4 @@ const TeamChannelHeader = ({ setIsEditing }) => {
     );
   };
 
-  export default ChannelInner
+  export default ChannelInner;
