@@ -474,7 +474,6 @@
     width: 32px;
     display: flex;
     justify-content: center;
-    margin-left:40px; /* Edited */
   }
   
   .channel-search__input__text {
