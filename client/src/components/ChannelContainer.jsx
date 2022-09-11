@@ -1,9 +1,9 @@
 import React from 'react';
 import { Channel, MessageTeam } from 'stream-chat-react';
-
 import { ChannelInner, CreateChannel, EditChannel } from './';
+import FriendProfile from "./FriendProfile";
 
-const ChannelContainer = ({ isCreating, setIsCreating, isEditing, setIsEditing, createType }) => {
+const ChannelContainer = ({ isCreating, setIsCreating, isEditing, setIsEditing, createType, setProfile, profile }) => {
     if(isCreating) {
         return (
             <div className="channel__container">
@@ -27,14 +27,20 @@ const ChannelContainer = ({ isCreating, setIsCreating, isEditing, setIsEditing, 
         </div>
     )
 
+
     return (
         <div className=" channel__container">
-            <Channel
-                EmptyStateIndicator={EmptyState}
-                Message={(messageProps, i) => <MessageTeam key={i} {...messageProps} />}
-            >
-                <ChannelInner setIsEditing={setIsEditing} />
-            </Channel>
+            {
+                profile===true?
+                    <FriendProfile/>
+                :
+                <Channel
+                    EmptyStateIndicator={EmptyState}
+                    Message={(messageProps, i) => <MessageTeam key={i} {...messageProps} />}
+                >
+                    <ChannelInner setIsEditing={setIsEditing} setProfile={setProfile}/>
+                </Channel>
+            }
         </div>
     );
 }

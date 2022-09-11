@@ -404,6 +404,13 @@
     background: var(--primary-color);
     width: 240px;
   }
+
+  .channel-list__list__wrapper-logged {
+    text-align:center;
+    color:white;
+    font-size: smaller;
+    font-family: Arial, Helvetica, sans-serif;
+  }
   
   .icon1__inner {
     font-family: Helvetica Neue, sans-serif;
@@ -899,6 +906,7 @@
     display: flex;
     align-items: center;
     margin-right: 8px;
+    cursor:pointer;
   }
   
   .team-channel-header__name-multi:nth-child(3) {
