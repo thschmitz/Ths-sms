@@ -57,8 +57,6 @@ const ChannelListContent = ({isCreating, setIsCreating, setCreateType, setIsEdit
 
   const filters = {members: {$in: [client.userID]}}
 
-  console.log("Cliente: ", client)
-
   return (
     <>
       <SideBar logout={logout}/>

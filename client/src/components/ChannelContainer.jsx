@@ -32,7 +32,7 @@ const ChannelContainer = ({ isCreating, setIsCreating, isEditing, setIsEditing, 
         <div className=" channel__container">
             {
                 profile===true?
-                    <FriendProfile/>
+                    <FriendProfile setProfile={setProfile}/>
                 :
                 <Channel
                     EmptyStateIndicator={EmptyState}

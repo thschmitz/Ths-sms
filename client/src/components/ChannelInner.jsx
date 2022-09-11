@@ -81,13 +81,28 @@ const TeamChannelHeader = ({ setIsEditing, setProfile }) => {
       if (watchers === 1) return '1 user online';
       return `${watchers} users online`;
     };
+
+    const members = Object.values(channel.state.members).filter(({ user }) => user.id !== client.userID);
+
+    const user = members[0]?.user;
   
     return (
 
       <div className='team-channel-header__container'>
         <MessagingHeader />
         <div className='team-channel-header__right'>
-          <p className='team-channel-header__right-text'>{getWatcherText(watcher_count)}</p>
+          <p className='team-channel-header__right-text'>
+            {
+              user?.online?
+                <div className="profile-list__online">
+                  <p>● Online</p>
+                </div>
+              :
+                <div className="profile-list__offline">
+                  <p>● Offline</p>
+                </div>
+            }
+          </p>
         </div>
       </div>
     );

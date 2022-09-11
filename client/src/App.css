@@ -442,7 +442,49 @@
     align-items: center;
     justify-content: center;
   }
-  
+
+  .profile-list__body {
+    display:flex;
+    flex-direction: column;
+  }
+
+  .profile-list__header {
+    text-align: center;
+    margin-top: 10px;
+    cursor: pointer;
+  }
+
+  .profile-list__content {
+    text-align: center;
+    margin-top: 100px;
+  }
+
+  .profile-list__content-user {
+    display:flex;
+  }
+
+  .profile-list__content-data {
+    margin: 0 auto;
+  }
+
+  .profile-list__content-photo {
+    margin-left: 40px;
+  }
+
+  .profile-list__info{
+    font-size: 20px;
+    display:flex;
+    flex-direction: column;
+  }
+
+  .profile-list__online p {
+    color: green;
+  }
+
+  .profile-list__offline p{
+    color:red;
+  }
+
   .channel-list__header {
     height: 62px;
   }
@@ -1752,6 +1794,11 @@
   @media screen and (max-width: 960px) {
     .channel-list__container {
       display: none;
+    }
+
+
+    .profile-list__content-user {
+      flex-direction: column;
     }
   
     .team-channerl-header_menu-icon {
