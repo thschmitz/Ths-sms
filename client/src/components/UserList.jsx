@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Avatar, useChatContext, useCooldownTimer } from "stream-chat-react"
+import { Avatar, useChatContext } from "stream-chat-react"
 
 import { InviteIcon } from '../assets'
 
@@ -15,10 +15,24 @@ const ListContainer = ({children}) => {
     )
 }
 
+const queryChannel = async(client, user) => {
+    const filters = {
+        type: 'messaging',
+        member_count: 2,
+        members: { $eq: [client.user.id, user.id] },
+    };
 
+    const [existingChannel] = await client.queryChannels(filters);
+    if(existingChannel.data) {
+        return existingChannel;
+    }
+}
 
 const UserItem = ({user, setSelectedUsers}) => {
     const [selected, setSelected] = useState(false);
+    const [responseChannel, setResponseChannel] = useState();
+    const {client} = useChatContext();
+
     const handleSelect = () => {
         if(selected) {
             setSelectedUsers(( prevUsers ) => prevUsers.filter((prevUser) => prevUser !== user.id))
@@ -27,16 +41,39 @@ const UserItem = ({user, setSelectedUsers}) => {
         }
         setSelected((prevSelected) => !prevSelected)
     }
-    return (
-        <div className="user-item__wrapper" onClick={handleSelect}>
-            <div className="user-item__name-wrapper">
-                <Avatar image={user.image} name={user.fullName || user.id} size={32}/>
-                <p className="user-item__name">{user.fullName || user.id}</p>
+
+    queryChannel(client, user).then((response) => {
+        console.log(response)
+        setResponseChannel(response)
+    })
+
+    if(responseChannel){
+        return (
+            <div className="user-item__wrapper" onClick={handleSelect}>
+                <div className="user-item__name-wrapper">
+                    <Avatar image={user.image} name={user.fullName || user.id} size={32}/>
+                    <p className="user-item__name">{user.fullName || user.id}</p>
+                </div>
+                <div className="privated">
+                    <InviteIcon/>
+                </div>
+                
             </div>
-            {selected? <InviteIcon/> : <div className="user-item__invite-empty"/>}
-            
-        </div>
-    )
+        )
+    } else {
+        return(
+            <div className="user-item__wrapper" onClick={handleSelect}>
+                <div className="user-item__name-wrapper">
+                    <Avatar image={user.image} name={user.fullName || user.id} size={32}/>
+                    <p className="user-item__name">{user.fullName || user.id}</p>
+                </div>
+                {selected? <InviteIcon/> : <div className="user-item__invite-empty"/>}
+            </div>
+
+        )
+    }
+
+    
 }
 
 const UserList = ({setSelectedUsers}) => {
