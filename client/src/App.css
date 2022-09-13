@@ -761,6 +761,10 @@
     margin: 0px 20px;
     justify-content: space-between;
   }
+
+  .user-item__invited p{
+    margin-right: 15px;
+  }
   
   .user-item__wrapper:hover {
     background: #f7f6f8;

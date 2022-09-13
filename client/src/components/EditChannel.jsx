@@ -50,7 +50,7 @@ const EditChannel = ({setIsEditing}) => {
         <CloseCreateChannel setIsEditing={setIsEditing}/>
       </div>
       <ChannelNameInput channelName={channelName} setChannelName={setChannelName}/>
-      <UserList setSelectedUsers={setSelectedUsers} />
+      <UserList setSelectedUsers={setSelectedUsers} createType={"editing"}/>
       <div className="edit-channel__button-wrapper" onClick={updateChannel}>
         <p>Save Changes</p>
       </div>

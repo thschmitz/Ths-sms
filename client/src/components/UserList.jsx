@@ -15,7 +15,7 @@ const ListContainer = ({children}) => {
     )
 }
 
-const queryChannel = async(client, user) => {
+const queryChannelMessaging = async(client, user) => {
     const filters = {
         type: 'messaging',
         member_count: 2,
@@ -28,10 +28,27 @@ const queryChannel = async(client, user) => {
     }
 }
 
-const UserItem = ({user, setSelectedUsers}) => {
+const queryChannelTeam = async(client, user, channel) => {
+    const filters = {
+        type: "team",
+        member_count: channel.data.member_count,
+        members: { $in: [client.user.id, user.id]}
+    }
+
+    console.log("Filters: ", filters)
+
+    const [existingChannel] = await client.queryChannels(filters);
+    console.log("ExistingChannel: ", existingChannel)
+    if(existingChannel.data) {
+        console.log(existingChannel.data);
+        return existingChannel;
+    }
+}
+
+const UserItem = ({user, setSelectedUsers, createType}) => {
     const [selected, setSelected] = useState(false);
     const [responseChannel, setResponseChannel] = useState();
-    const {client} = useChatContext();
+    const {client, channel} = useChatContext();
 
     const handleSelect = () => {
         if(selected) {
@@ -42,25 +59,76 @@ const UserItem = ({user, setSelectedUsers}) => {
         setSelected((prevSelected) => !prevSelected)
     }
 
-    queryChannel(client, user).then((response) => {
-        console.log(response)
-        setResponseChannel(response)
-    })
+    console.log("UserContext: ", user)
+    console.log("ChannelContext: ", channel);
+    console.log("ClientContext: ", client)
 
-    if(responseChannel){
-        return (
-            <div className="user-item__wrapper" onClick={handleSelect}>
-                <div className="user-item__name-wrapper">
-                    <Avatar image={user.image} name={user.fullName || user.id} size={32}/>
-                    <p className="user-item__name">{user.fullName || user.id}</p>
+
+    if(createType==="messaging"){
+        queryChannelMessaging(client, user).then((responseMessaging) => {
+            setResponseChannel(responseMessaging)
+        })
+
+        if(responseChannel){
+            return (
+                <div className="user-item__wrapper">
+                    <div className="user-item__name-wrapper">
+                        <Avatar image={user.image} name={user.fullName || user.id} size={32}/>
+                        <p className="user-item__name">{user.fullName || user.id}</p>
+                    </div>
+                    <div className="user-item__invited">
+                        <p>Invited</p>
+                    </div>
+                    
                 </div>
-                <div className="privated">
-                    <InviteIcon/>
+            )
+        } else{
+
+            
+            return(
+                <div className="user-item__wrapper" onClick={handleSelect}>
+                    <div className="user-item__name-wrapper">
+                        <Avatar image={user.image} name={user.fullName || user.id} size={32}/>
+                        <p className="user-item__name">{user.fullName || user.id}</p>
+                    </div>
+                    {selected? <InviteIcon/> : <div className="user-item__invite-empty"/>}
                 </div>
-                
-            </div>
-        )
-    } else {
+
+            )
+        }
+    } else if(createType==="editing"){
+        queryChannelTeam(client, user, channel).then((responseTeam) => {
+            setResponseChannel(responseTeam)
+        })
+
+        if(responseChannel) {
+            return (
+                <div className="user-item__wrapper">
+                    <div className="user-item__name-wrapper">
+                        <Avatar image={user.image} name={user.fullName || user.id} size={32}/>
+                        <p className="user-item__name">{user.fullName || user.id}</p>
+                    </div>
+                    <div className="user-item__invited">
+                        <p>Invited</p>
+                    </div>
+                    
+                </div>
+            )
+        } else {
+            return(
+                <div className="user-item__wrapper" onClick={handleSelect}>
+                    <div className="user-item__name-wrapper">
+                        <Avatar image={user.image} name={user.fullName || user.id} size={32}/>
+                        <p className="user-item__name">{user.fullName || user.id}</p>
+                    </div>
+                    {selected? <InviteIcon/> : <div className="user-item__invite-empty"/>}
+                </div>
+    
+            )
+        }
+        
+
+    } else if(createType==="team") {
         return(
             <div className="user-item__wrapper" onClick={handleSelect}>
                 <div className="user-item__name-wrapper">
@@ -72,11 +140,9 @@ const UserItem = ({user, setSelectedUsers}) => {
 
         )
     }
-
-    
 }
 
-const UserList = ({setSelectedUsers}) => {
+const UserList = ({setSelectedUsers, createType}) => {
     const {client} = useChatContext();
     const [loading, setLoading] = useState(false);
     const [users, setUsers] = useState([]);
@@ -131,7 +197,7 @@ const UserList = ({setSelectedUsers}) => {
         <ListContainer>
             {loading ? <div className="user-list__message">Loading users...</div> : (
                 users?.map((user, i) => (
-                    <UserItem index={i} key={user.id} user={user} setSelectedUsers={setSelectedUsers}/>
+                    <UserItem index={i} key={user.id} user={user} setSelectedUsers={setSelectedUsers} createType={createType}/>
                 ))
             )}
         </ListContainer>
