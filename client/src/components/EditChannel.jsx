@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useChatContext } from "stream-chat-react";
 
 import { CloseCreateChannel } from '../assets';
@@ -19,11 +19,19 @@ const ChannelNameInput = ({channelName="", setChannelName}) => {
   )
 }
 
-const EditChannel = ({setIsEditing}) => {
+const QueryingMembers = async(channel) => {
+
+  let sort = {created_at: 1};
+
+  return await channel.queryMembers({}, sort, {})
+}
+
+const EditChannel =  ({setIsEditing}) => {
 
   const {channel} = useChatContext();
   const [channelName, setChannelName] = useState(channel?.data?.name);
   const [selectedUsers, setSelectedUsers] = useState([]);
+  const [members, setMembers] = useState();
 
   const updateChannel = async (event) => {
     event.preventDefault();
@@ -43,6 +51,12 @@ const EditChannel = ({setIsEditing}) => {
     setSelectedUsers([])
   }
 
+  useEffect(() => {
+    QueryingMembers(channel).then((response) => {
+      setMembers(response.members)
+    })
+  }, [])
+
   return (
     <div className="edit-channel__container">
       <div className="edit-channel__header">
@@ -50,7 +64,7 @@ const EditChannel = ({setIsEditing}) => {
         <CloseCreateChannel setIsEditing={setIsEditing}/>
       </div>
       <ChannelNameInput channelName={channelName} setChannelName={setChannelName}/>
-      <UserList setSelectedUsers={setSelectedUsers} createType={"editing"}/>
+      <UserList setSelectedUsers={setSelectedUsers} createType={"editing"} members={members}/>
       <div className="edit-channel__button-wrapper" onClick={updateChannel}>
         <p>Save Changes</p>
       </div>

@@ -3,6 +3,7 @@ import { Avatar, useChatContext } from "stream-chat-react"
 
 import { InviteIcon } from '../assets'
 
+
 const ListContainer = ({children}) => {
     return(
         <div className="user-list__container">
@@ -28,27 +29,20 @@ const queryChannelMessaging = async(client, user) => {
     }
 }
 
-const queryChannelTeam = async(client, user, channel) => {
-    const filters = {
-        type: "team",
-        member_count: channel.data.member_count,
-        members: { $in: [client.user.id, user.id]}
-    }
+const queryChannelEdit = async(user, channel) => {
+    const response = await channel.queryMembers({user_id: `${user.id}`});
 
-    console.log("Filters: ", filters)
+    return response.members[0];
 
-    const [existingChannel] = await client.queryChannels(filters);
-    console.log("ExistingChannel: ", existingChannel)
-    if(existingChannel.data) {
-        console.log(existingChannel.data);
-        return existingChannel;
-    }
+   
+
 }
 
-const UserItem = ({user, setSelectedUsers, createType}) => {
+const UserItem = ({user, setSelectedUsers, createType, members, setIsMember, isMember}) => {
     const [selected, setSelected] = useState(false);
     const [responseChannel, setResponseChannel] = useState();
     const {client, channel} = useChatContext();
+
 
     const handleSelect = () => {
         if(selected) {
@@ -58,11 +52,6 @@ const UserItem = ({user, setSelectedUsers, createType}) => {
         }
         setSelected((prevSelected) => !prevSelected)
     }
-
-    console.log("UserContext: ", user)
-    console.log("ChannelContext: ", channel);
-    console.log("ClientContext: ", client)
-
 
     if(createType==="messaging"){
         queryChannelMessaging(client, user).then((responseMessaging) => {
@@ -83,8 +72,6 @@ const UserItem = ({user, setSelectedUsers, createType}) => {
                 </div>
             )
         } else{
-
-            
             return(
                 <div className="user-item__wrapper" onClick={handleSelect}>
                     <div className="user-item__name-wrapper">
@@ -97,8 +84,9 @@ const UserItem = ({user, setSelectedUsers, createType}) => {
             )
         }
     } else if(createType==="editing"){
-        queryChannelTeam(client, user, channel).then((responseTeam) => {
-            setResponseChannel(responseTeam)
+        queryChannelEdit(user, channel).then((responseEdit) => {
+            console.log("res: ", responseEdit)
+            setResponseChannel(responseEdit)
         })
 
         if(responseChannel) {
@@ -142,12 +130,13 @@ const UserItem = ({user, setSelectedUsers, createType}) => {
     }
 }
 
-const UserList = ({setSelectedUsers, createType}) => {
+const UserList = ({setSelectedUsers, createType, members}) => {
     const {client} = useChatContext();
     const [loading, setLoading] = useState(false);
     const [users, setUsers] = useState([]);
     const [listEmpty, setListEmpty] = useState(false);
     const [error, setError] = useState(false)
+    const [isMember, setIsMember] = useState(false);
 
     useEffect(() => {
         const getUsers = async () => {
@@ -197,7 +186,7 @@ const UserList = ({setSelectedUsers, createType}) => {
         <ListContainer>
             {loading ? <div className="user-list__message">Loading users...</div> : (
                 users?.map((user, i) => (
-                    <UserItem index={i} key={user.id} user={user} setSelectedUsers={setSelectedUsers} createType={createType}/>
+                    <UserItem index={i} key={user.id} user={user} setSelectedUsers={setSelectedUsers} createType={createType} members={members} setIsMember={setIsMember} isMember={isMember}/>
                 ))
             )}
         </ListContainer>
