@@ -13,8 +13,9 @@ const ChannelNameInput = ({ channelName = '', setChannelName }) => {
 
     return (
         <div className="channel-name-input__wrapper">
-            <p>Name</p>
-            <input value={channelName} onChange={handleChange} placeholder="channel-name" />
+            <input value={channelName} onChange={handleChange} placeholder="channel-name" required />
+
+            {!channelName? <div className="channel-name-warning">This field is required!</div> : ""}
             <p>Add Members</p>
         </div>
     )
@@ -28,20 +29,24 @@ const CreateChannel = ({ createType, setIsCreating }) => {
     const createChannel = async (e) => {
         e.preventDefault();
 
-        try {
-            const newChannel = await client.channel(createType, channelName, {
-                name: channelName, members: selectedUsers
-            });
-
-            await newChannel.watch();
-
-            setChannelName('');
-            setIsCreating(false);
-            setSelectedUsers([client.userID]);
-            setActiveChannel(newChannel);
-        } catch (error) {
-            console.log(error);
+        if(channelName){
+            try {
+                const newChannel = await client.channel(createType, channelName, {
+                    name: channelName, members: selectedUsers
+                });
+    
+                await newChannel.watch();
+    
+                setChannelName('');
+                setIsCreating(false);
+                setSelectedUsers([client.userID]);
+                setActiveChannel(newChannel);
+            } catch (error) {
+                console.log(error);
+            }
         }
+
+
     }
 
     return (

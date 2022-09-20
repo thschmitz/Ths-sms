@@ -1,7 +1,7 @@
+import { DotSpinner } from "@uiball/loaders";
 import axios from 'axios';
 import React, { useState } from 'react';
 import Cookies from 'universal-cookie';
-
 import signinImage from '../assets/signup.jpg';
 
 const cookies = new Cookies();
@@ -18,6 +18,7 @@ const initialState = {
 const Auth = () => {
     const [form, setForm] = useState(initialState);
     const [isSignup, setIsSignup] = useState(true);
+    const [loading, setLoading] = useState(false);
 
     const handleChange = (e) => {
         setForm({ ...form, [e.target.name]: e.target.value });
@@ -25,7 +26,7 @@ const Auth = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
+        setLoading(true);
         const { username, password, phoneNumber, avatarURL } = form;
 
         const URL = 'https://ths-sms.herokuapp.com/auth';
@@ -46,12 +47,29 @@ const Auth = () => {
             cookies.set('avatarURL', avatarURL);
             cookies.set('hashedPassword', hashedPassword);
         }
-
         window.location.reload();
+        setLoading(false);
     }
 
     const switchMode = () => {
         setIsSignup((prevIsSignup) => !prevIsSignup);
+    }
+
+    if(loading) {
+        return(    
+            <div className="auth__form-container">
+                <div className="auth__form-container_fields">
+                    <div className="auth__form-loading">
+                        <DotSpinner size={50} color="#fff"/>
+                    </div>
+                </div>
+                
+                <div className="auth__form-container_image">
+                    <img src={signinImage} alt="sign in" />
+                </div>
+            </div>
+            
+        )
     }
 
     return (

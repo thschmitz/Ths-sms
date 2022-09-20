@@ -13,6 +13,16 @@
   #root {
     height: 100%;
   }
+
+  .auth__form-loading{
+    display:flex;
+    width: auto;
+    align-items: center;
+    margin-top: 52px;
+    justify-content: center;
+    padding: 10px;
+    font-size: x-large;
+  }
   
   .auth__form-container {
     min-height: 100vh;
@@ -655,12 +665,19 @@
   .create-channel__header svg {
     cursor: pointer;
   }
-  
+
+  .channel-name-warning{
+    color:red;
+    font-family: Arial, Helvetica, sans-serif;
+    padding-left: 10px;
+  }
+
   .channel-name-input__wrapper {
     display: flex;
     flex-direction: column;
     height: 169px;
     padding-left: 20px;
+    margin-top: 20px;
     box-shadow: 0px 1px 0px rgba(0, 0, 0, 0.1);
   }
   
