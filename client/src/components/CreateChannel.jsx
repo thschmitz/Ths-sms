@@ -26,25 +26,35 @@ const CreateChannel = ({ createType, setIsCreating }) => {
     const [selectedUsers, setSelectedUsers] = useState([client.userID || ''])
     const [channelName, setChannelName] = useState('');
 
+    const createFunction = async() => {
+        try {
+            const newChannel = await client.channel(createType, channelName, {
+                name: channelName, members: selectedUsers
+            });
+
+            await newChannel.watch();
+
+            setChannelName('');
+            setIsCreating(false);
+            setSelectedUsers([client.userID]);
+            setActiveChannel(newChannel);
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
     const createChannel = async (e) => {
         e.preventDefault();
 
-        if(channelName){
-            try {
-                const newChannel = await client.channel(createType, channelName, {
-                    name: channelName, members: selectedUsers
-                });
-    
-                await newChannel.watch();
-    
-                setChannelName('');
-                setIsCreating(false);
-                setSelectedUsers([client.userID]);
-                setActiveChannel(newChannel);
-            } catch (error) {
-                console.log(error);
+        if(createType=== "messaging"){
+            createFunction();
+        } else {
+            if(channelName){
+                createFunction();
             }
         }
+
+        
 
 
     }
