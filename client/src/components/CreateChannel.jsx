@@ -53,10 +53,6 @@ const CreateChannel = ({ createType, setIsCreating }) => {
                 createFunction();
             }
         }
-
-        
-
-
     }
 
     return (
